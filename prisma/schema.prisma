@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id         String   @id @default(uuid())
+  name       String
+  capacity   String
+  price      String
+  optimalFor String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  address   String
+  status    String   @default("NEW") // NEW, CONTACTED, CONVERTED, CLOSED
+  createdAt DateTime @default(now())
+}
+
+model ServiceRequest {
+  id          String   @id @default(uuid())
+  name        String
+  phone       String
+  address     String
+  issue       String
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, RESOLVED
+  createdAt   DateTime @default(now())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  author     String
+  text       String
+  rating     Int
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model User {
+  id                 String              @id @default(uuid())
+  phone              String              @unique
+  name               String?
+  createdAt          DateTime            @default(now())
+  serviceRequests    ServiceRequest[]
+  installationStatus InstallationStatus?
+}
+
+model InstallationStatus {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    String   @default("Processing") // e.g. Processing, Site Inspection, Installation Scheduled, Installed
+  progress  Int      @default(10) // Percentage: 10, 25, 75, 100
+  updatedAt DateTime @updatedAt
+}
