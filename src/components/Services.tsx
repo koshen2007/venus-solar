@@ -23,13 +23,23 @@ export default function Services({ onContactClick }: { onContactClick?: () => vo
           Choose Your Power.
         </h2>
 
-        {/* CSS GRID: Isse Gap aur Width dono balance rahenge, overflow nahi hoga */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10 items-start w-full">
           
-          {/* Tabs Container */}
-          <div className="lg:col-span-4 w-full flex lg:flex-col gap-3 overflow-x-auto pb-4 lg:pb-0 no-scrollbar snap-x snap-mandatory px-2 pt-2">
+          {/* Tabs Container - Scrollbar ko permanently gaayab kiya */}
+          <div 
+            className="lg:col-span-4 w-full flex lg:flex-col gap-4 overflow-x-auto pb-2 lg:pb-0 snap-x snap-mandatory px-1 pt-1"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {tiers.map((t) => (
-              <button key={t.id} onClick={() => setActiveTab(t.id)} className={`flex-shrink-0 w-[140px] lg:w-full snap-center text-left p-5 rounded-[2rem] border-2 transition-all ${activeTab === t.id ? 'border-green-600 bg-green-50 shadow-md transform-none' : 'border-transparent bg-gray-50'}`}>
+              <button 
+                key={t.id} 
+                onClick={() => setActiveTab(t.id)} 
+                className={`flex-shrink-0 w-[150px] lg:w-full snap-center text-left p-5 rounded-[2rem] border-2 transition-all duration-300 ${
+                  activeTab === t.id 
+                  ? 'border-green-500 bg-green-50 shadow-md' 
+                  : 'border-gray-200 bg-white hover:border-gray-300' /* Yahan grey border diya inactive ko */
+                }`}
+              >
                 <div className="flex justify-between items-center mb-1">
                     <span className={`block font-bold text-xl ${activeTab === t.id ? 'text-green-700' : 'text-gray-400'}`}>{t.kw}</span>
                     {activeTab === t.id && (t.isCustom ? <Settings2 className="text-green-600 w-5 h-5 animate-spin-slow" /> : <Zap className="text-green-600 w-5 h-5 animate-pulse" />)}
@@ -52,7 +62,6 @@ export default function Services({ onContactClick }: { onContactClick?: () => vo
                     <input type="range" min="6" max="50" step="1" value={customKw} onChange={(e) => setCustomKw(parseInt(e.target.value))} className="w-full h-2 bg-gray-700 rounded-lg accent-green-500" />
                     <span className="text-2xl font-black text-green-400 w-20">{customKw}kW</span>
                   </div>
-                  {/* TEXT SIZE REDUCED SLIGHTLY TO FIT EVERY SCREEN */}
                   <span className="text-5xl md:text-7xl font-black tracking-tighter truncate block w-full">₹{customPrice}</span>
                 </div>
               ) : (
@@ -77,6 +86,11 @@ export default function Services({ onContactClick }: { onContactClick?: () => vo
           </div>
         </div>
       </div>
+      
+      {/* Brave browser ke scrollbar ka permanent ilaaj */}
+      <style dangerouslySetInnerHTML={{__html: `
+        ::-webkit-scrollbar { display: none; }
+      `}} />
     </section>
   );
 }
