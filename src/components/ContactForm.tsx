@@ -1,106 +1,91 @@
 "use client";
+import { useState } from "react";
 
-import { forwardRef, useState } from "react";
+export default function ContactForm() {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [verifyPhone, setVerifyPhone] = useState(""); 
+  const [location, setLocation] = useState(""); 
+  const [error, setError] = useState("");
+  
+  // NAYA: Form ko hilane wala switch
+  const [isShaking, setIsShaking] = useState(false); 
 
-export const ContactForm = forwardRef<HTMLElement>((props, ref) => {
-  const [formData, setFormData] = useState({ name: '', phone: '', address: '' });
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('loading');
-
-    try {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        setStatus('success');
-        setFormData({ name: '', phone: '', address: '' });
-        setTimeout(() => setStatus('idle'), 5000);
-      } else {
-        setStatus('error');
-      }
-    } catch (error) {
-      console.error(error);
-      setStatus('error');
+    
+    // Agar number match nahi hue toh form hilega aur SUBMIT NAHI HOGA
+    if (phone !== verifyPhone) {
+      setError("Phone numbers do not match. Please check again.");
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500); // Aadhe second baad hilna band
+      return; 
     }
+    
+    setError("");
+    alert("Thank you! Your request has been successfully submitted.");
+    setName(""); setPhone(""); setVerifyPhone(""); setLocation("");
+  };
+
+  const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {
+    setter(e.target.value.replace(/\D/g, ''));
   };
 
   return (
-    <section ref={ref} className="py-12 px-6 w-full max-w-2xl bg-gray-50 rounded-3xl mt-12 mb-8 border border-gray-100 shadow-sm mx-auto scroll-mt-24">
-      <h2 className="text-3xl font-black text-eco-green mb-2 text-center">
-        Get Started
-      </h2>
-      <p className="text-center text-gray-600 mb-8">
-        Leave your details and we'll handle the rest.
-      </p>
+    <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-xl border border-gray-100">
       
-      {status === 'success' ? (
-        <div className="bg-green-50 text-eco-green p-6 rounded-2xl text-center border border-green-200">
-          <svg className="w-12 h-12 mx-auto mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          <h3 className="text-xl font-bold mb-2">Details Submitted Successfully!</h3>
+      {/* NAYA: CSS Animation (Jugaad for Shake) */}
+      <style jsx>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-10px); }
+          50% { transform: translateX(10px); }
+          75% { transform: translateX(-10px); }
+        }
+        .shake-animation { animation: shake 0.4s ease-in-out; }
+      `}</style>
+
+      <h2 className="text-3xl font-extrabold text-center text-gray-900 mb-3">Book Your Solar Installation</h2>
+      <p className="text-center text-gray-500 mb-8 font-medium">Leave your details below and our energy experts will handle the rest.</p>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" className="w-full border border-gray-200 p-4 rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-green-600" required />
         </div>
-      ) : (
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-eco-green font-bold mb-2 text-lg">Full Name</label>
-            <input 
-              required
-              type="text" 
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              placeholder="Tanveer Ahmed" 
-              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:border-eco-yellow focus:ring-2 focus:ring-yellow-200 transition-all text-lg" 
-            />
+            <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>
+            <input type="tel" value={phone} onChange={(e) => handleNumberInput(e, setPhone)} placeholder="10-digit mobile number" className="w-full border border-gray-200 p-4 rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-green-600" required maxLength={10} minLength={10} />
           </div>
-          
           <div>
-            <label className="block text-eco-green font-bold mb-2 text-lg">Phone Number</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Confirm Phone Number</label>
+            {/* YAHAN LAGA HAI SHAKE EFFECT */}
             <input 
-              required
               type="tel" 
-              value={formData.phone}
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
-              placeholder="+91 9024424633" 
-              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:border-eco-yellow focus:ring-2 focus:ring-yellow-200 transition-all text-lg" 
+              value={verifyPhone} 
+              onChange={(e) => handleNumberInput(e, setVerifyPhone)} 
+              placeholder="Re-enter phone number" 
+              className={`w-full border p-4 rounded-xl outline-none focus:ring-2 focus:ring-green-600 transition-all ${
+                isShaking ? 'shake-animation border-red-500 bg-red-100 text-red-700' : 'border-gray-200 bg-gray-50 text-gray-900'
+              }`} 
+              required 
+              maxLength={10} 
+              minLength={10} 
             />
           </div>
-          
-          <div>
-            <label className="block text-eco-green font-bold mb-2 text-lg">Installation Address</label>
-            <textarea 
-              required
-              rows={3} 
-              value={formData.address}
-              onChange={(e) => setFormData({...formData, address: e.target.value})}
-              placeholder="Plot 42, Sector 4..." 
-              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:border-eco-yellow focus:ring-2 focus:ring-yellow-200 transition-all text-lg resize-none"
-            ></textarea>
-          </div>
-          
-          <button 
-            type="submit" 
-            disabled={status === 'loading'}
-            className="mt-6 bg-eco-green hover:bg-[#043427] disabled:bg-gray-400 text-white text-xl font-bold py-5 rounded-xl shadow-md transition-transform transform hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {status === 'loading' ? 'Submitting...' : 'Submit Details'}
-          </button>
+        </div>
+        
+        {error && <p className={`text-red-500 text-sm font-bold mt-1 ${isShaking ? 'shake-animation' : ''}`}>{error}</p>}
 
-          {status === 'error' && (
-            <p className="text-red-500 text-center font-bold">Failed to submit. Please try again.</p>
-          )}
-        </form>
-      )}
-    </section>
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Installation Address</label>
+          <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Enter your complete address" className="w-full border border-gray-200 p-4 rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-green-600" required />
+        </div>
+
+        <button type="submit" className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 shadow-lg">Submit Request</button>
+      </form>
+    </div>
   );
-});
-
-ContactForm.displayName = 'ContactForm';
-
-export default ContactForm;
+}

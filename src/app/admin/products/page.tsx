@@ -1,58 +1,82 @@
-import prisma from "@/lib/db";
+"use client";
+import { useState, useEffect } from "react";
 
-export const dynamic = "force-dynamic";
+export default function ProductsPage() {
+  const [showForm, setShowForm] = useState(false);
+  const [products, setProducts] = useState<any[]>([]);
+  
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [capacity, setCapacity] = useState("");
+  const [optimalFor, setOptimalFor] = useState("");
+  const [location, setLocation] = useState(""); 
 
-export default async function ProductsPage() {
-  const products = await prisma.product.findMany({
-    orderBy: { createdAt: "desc" }
-  });
+  const fetchProducts = async () => {
+    const res = await fetch("/api/products");
+    if (res.ok) setProducts(await res.json());
+  };
+
+  useEffect(() => { fetchProducts(); }, []);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const res = await fetch("/api/products", {
+      method: "POST",
+      body: JSON.stringify({ name, price, capacity, optimalFor, location }),
+      headers: { "Content-Type": "application/json" },
+    });
+    if (res.ok) {
+      setShowForm(false);
+      setName(""); setPrice(""); setCapacity(""); setOptimalFor(""); setLocation("");
+      fetchProducts();
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Bhai pakka udana hai isko?")) return;
+    const res = await fetch("/api/products", {
+      method: "DELETE",
+      body: JSON.stringify({ id }),
+      headers: { "Content-Type": "application/json" }
+    });
+    if (res.ok) fetchProducts();
+  };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-2">
-        <h1 className="text-3xl font-black text-eco-green">Products & Pricing</h1>
-        <button className="bg-eco-green hover:bg-[#033024] text-white px-5 py-2.5 rounded-full font-bold text-sm shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2">
-          + Add New Product
-        </button>
+    <div className="p-8 bg-gray-100 min-h-screen text-gray-900">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-green-800">Venus Admin (Products)</h1>
+        <button onClick={() => setShowForm(true)} className="bg-green-600 text-white px-6 py-2 rounded-xl font-bold">+ Add New Product</button>
       </div>
-      <p className="text-gray-500 mb-8">Manage solar packages, their capacities, and estimated pricing shown on the live site.</p>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.length === 0 ? (
-          <div className="col-span-full bg-white p-12 text-center rounded-2xl border border-gray-100 shadow-sm text-gray-400">
-            No products added yet. Click "+ Add New Product" to get started!
+
+      {showForm && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-8 rounded-2xl w-full max-w-md relative">
+            <button onClick={() => setShowForm(false)} className="absolute top-4 right-6 text-3xl font-bold text-red-500">×</button>
+            <h2 className="text-2xl font-bold mb-6">Add Product</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="w-full border p-3 rounded-lg" required />
+              <input value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Price" className="w-full border p-3 rounded-lg" required />
+              <input value={capacity} onChange={(e) => setCapacity(e.target.value)} placeholder="Capacity" className="w-full border p-3 rounded-lg" required />
+              <input value={optimalFor} onChange={(e) => setOptimalFor(e.target.value)} placeholder="Optimal For" className="w-full border p-3 rounded-lg" required />
+              <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Delivery Location (e.g. Siwana)" className="w-full border p-3 rounded-lg" required />
+              <button type="submit" className="w-full bg-green-600 text-white p-3 rounded-lg font-bold">Save Product</button>
+            </form>
           </div>
-        ) : (
-          products.map((product) => (
-            <div key={product.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-eco-green hover:shadow-md transition-all group flex flex-col justify-between h-full">
-              
-              <div className="mb-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-black text-eco-green pr-4">{product.name}</h3>
-                  <div className="bg-green-50 text-eco-green px-2 py-1 rounded-md text-xs font-bold whitespace-nowrap">
-                    {product.capacity}
-                  </div>
-                </div>
-                
-                <h4 className="text-2xl font-bold text-gray-800 mb-3">{product.price}</h4>
-                
-                <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-600 border border-gray-100 italic">
-                  <strong>Optimal For:</strong> {product.optimalFor}
-                </div>
-              </div>
+        </div>
+      )}
 
-              <div className="flex gap-2 border-t border-gray-50 pt-4 mt-auto">
-                <button className="w-1/2 bg-gray-50 hover:bg-gray-100 text-gray-700 py-2 rounded-xl text-sm font-bold border border-gray-200 transition-colors">
-                  Edit
-                </button>
-                <button className="w-1/2 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-xl text-sm font-bold border border-red-100 transition-colors">
-                  Delete
-                </button>
-              </div>
-
-            </div>
-          ))
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {products.map((p) => (
+          <div key={p.id} className="bg-white p-6 rounded-2xl shadow-sm border relative">
+            <button onClick={() => handleDelete(p.id)} className="absolute top-4 right-4 bg-red-100 hover:bg-red-500 text-red-600 hover:text-white w-8 h-8 rounded-full flex items-center justify-center">🗑️</button>
+            <div className="h-40 bg-gray-100 rounded-xl mb-4 flex items-center justify-center text-gray-400">Image aayegi</div>
+            <h3 className="font-bold text-xl mb-1 pr-8">{p.name}</h3>
+            <p className="text-green-600 font-extrabold text-2xl mb-2">₹{p.price}</p>
+            <p className="text-sm">⚡ {p.capacity} | 🏠 {p.optimalFor}</p>
+            {p.location && <p className="text-xs mt-2 text-gray-600">📍 {p.location}</p>}
+          </div>
+        ))}
       </div>
     </div>
   );

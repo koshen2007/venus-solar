@@ -1,89 +1,89 @@
-export default function Portfolio() {
-  const videos = [
-    { label: "Residential Installation — Jaipur" },
-    { label: "Commercial Rooftop — 10kW System" },
-    { label: "Village Solar Project, 2024" },
-  ];
+"use client";
 
-  const photos = [
-    { src: "/portfolio/photo1.jpg", label: "Rooftop Array — Pali, Rajasthan", real: true },
-    { src: "/portfolio/photo2.jpg", label: "Inverter & DC Panel Setup", real: true },
-    { src: null, label: "More Photos Coming Soon", real: false },
-    { src: null, label: "More Photos Coming Soon", real: false },
-  ];
+import { useState } from "react";
+
+// Professional Buttons Component
+interface ArtButtonProps {
+  children: React.ReactNode;
+  className?: string;
+  variant?: 'primary' | 'secondary';
+  onClick?: () => void;
+}
+
+const ArtButton: React.FC<ArtButtonProps> = ({ children, className = "", variant = 'primary', onClick }) => {
+  const baseClass = "relative px-8 py-4 font-bold text-lg rounded-full transition-all duration-300 ease-out transform hover:-translate-y-1 hover:shadow-2xl active:translate-y-0 active:shadow-lg overflow-hidden group";
+  
+  const primaryClass = "bg-green-600 text-white hover:bg-green-700 shadow-[0_10px_20px_rgba(22,163,74,0.3)]";
+  const secondaryClass = "bg-gray-900 text-white hover:bg-black shadow-[0_10px_20px_rgba(0,0,0,0.2)]";
 
   return (
-    <section className="py-16 w-full">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-black text-eco-green mb-3 tracking-tight">
-          Our Recent Works
-        </h2>
-        <p className="text-gray-500 max-w-xl mx-auto">
-          Real installations. Real results. Delivered across Rajasthan with pride.
-        </p>
-      </div>
+    <button onClick={onClick} className={`${baseClass} ${variant === 'primary' ? primaryClass : secondaryClass} ${className}`}>
+      {/* Glow Effect */}
+      <span className="absolute inset-0 w-full h-full transition-all duration-300 scale-0 group-hover:scale-100 group-hover:bg-white/10 rounded-full"></span>
+      {children}
+    </button>
+  );
+};
 
-      {/* Videos */}
-      <div className="mb-10">
-        <h3 className="text-lg font-black text-gray-700 mb-4 uppercase tracking-widest text-center">
-          Installation Videos
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {videos.map((v, idx) => (
-            <div
-              key={idx}
-              className="group relative rounded-2xl overflow-hidden bg-gray-900 aspect-video flex items-center justify-center border-2 border-dashed border-gray-700 cursor-pointer hover:border-eco-yellow transition-colors"
-            >
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white p-4">
-                <div className="w-14 h-14 bg-eco-yellow rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                  <svg className="w-6 h-6 text-eco-green ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-                <p className="text-sm font-bold text-white/80 text-center">{v.label}</p>
-                <span className="text-xs text-white/40 italic">Video will be uploaded soon</span>
+export default function Portfolio() {
+  const projects = [
+    { id: 1, type: "video", title: "Residential Setup — Balotra", src: "https://www.w3schools.com/html/mov_bbb.mp4", thumbnail: "/projects/res-balotra.jpg" },
+    { id: 2, type: "image", title: "Commercial Array — Pali", src: "/projects/comm-pali.jpg" },
+    { id: 3, type: "video", title: "Industrial Plant — Barmer", src: "https://www.w3schools.com/html/movie.mp4", thumbnail: "/projects/ind-barmer.jpg" },
+  ];
+
+  const [activeTab, setActiveTab] = useState<'all' | 'video' | 'image'>('all');
+
+  const filteredProjects = projects.filter(p => activeTab === 'all' || p.type === activeTab);
+
+  return (
+    <section className="bg-white py-24 px-6 md:px-12 border-t-2 border-gray-100"> {/* Saans lene ki jagah */}
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-5xl font-extrabold text-center text-gray-950 mb-4 tracking-tight">Installation Gallery</h2>
+        <p className="text-center text-gray-600 mb-12 text-lg max-w-2xl mx-auto font-medium">
+          A visual showcase of our premier solar projects across Rajasthan. Quality that speaks for itself.
+        </p>
+
+        {/* Filter Buttons */}
+        <div className="flex justify-center gap-6 mb-16">
+          <ArtButton onClick={() => setActiveTab('all')} variant={activeTab === 'all' ? 'primary' : 'secondary'}>All</ArtButton>
+          <ArtButton onClick={() => setActiveTab('video')} variant={activeTab === 'video' ? 'primary' : 'secondary'}>Videos</ArtButton>
+          <ArtButton onClick={() => setActiveTab('image')} variant={activeTab === 'image' ? 'primary' : 'secondary'}>Photos</ArtButton>
+        </div>
+
+        {/* Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {filteredProjects.map((project) => (
+            <div key={project.id} className="relative group rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 aspect-[16/10] bg-gray-50 border border-gray-100">
+              
+              {project.type === "video" ? (
+                // Modern Video Player
+                <video 
+                  controls 
+                  poster={project.thumbnail} 
+                  className="w-full h-full object-cover"
+                >
+                  <source src={project.src} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                // Image with Hover Effect
+                <img 
+                  src={project.src} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+              )}
+
+              {/* Gradient & Text Overlay */}
+              <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+                <h3 className="text-white font-bold text-xl tracking-tight">{project.title}</h3>
+                <p className="text-gray-300 text-sm mt-1">{project.type === 'video' ? 'Video Case Study' : 'Project Photo'}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Photos */}
-      <div>
-        <h3 className="text-lg font-black text-gray-700 mb-4 uppercase tracking-widest text-center">
-          Photo Gallery
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {photos.map((p, idx) =>
-            p.real && p.src ? (
-              <div key={idx} className="group relative rounded-2xl overflow-hidden aspect-square shadow-sm hover:shadow-md transition-all">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.src}
-                  alt={p.label}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-3">
-                  <p className="text-white text-xs font-bold leading-tight">{p.label}</p>
-                </div>
-              </div>
-            ) : (
-              <div
-                key={idx}
-                className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-green-50 to-green-100 aspect-square flex items-center justify-center border-2 border-dashed border-green-200 hover:border-eco-green transition-all"
-              >
-                <div className="flex flex-col items-center gap-2 text-eco-green p-4 text-center">
-                  <svg className="w-10 h-10 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                  </svg>
-                  <span className="text-[11px] text-gray-400 font-medium">{p.label}</span>
-                </div>
-              </div>
-            )
-          )}
-        </div>
-      </div>
     </section>
   );
 }
-
