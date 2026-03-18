@@ -74,3 +74,12 @@ model GalleryItem {
   mediaUrl  String   // Image ya Video ka link (URL)
   createdAt DateTime @default(now())
 }
+// Ye tera Pricing Manager ka database hai
+model ServicePlan {
+  id          String   @id @default(cuid())
+  name        String   // "Family Pack"
+  kw          String   // "3 kW"
+  price       String   // "2,10,000"
+  description String   // "Handles 1.5 Ton AC..."
+  updatedAt   DateTime @updatedAt
+}
