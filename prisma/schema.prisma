@@ -66,3 +66,11 @@ model InstallationStatus {
   progress  Int      @default(10) // Percentage: 10, 25, 75, 100
   updatedAt DateTime @updatedAt
 }
+model GalleryItem {
+  id        String   @id @default(cuid())
+  title     String   // Project ka naam (e.g., "Pali Commercial")
+  type      String   // Sirf do hi option rakhna: "Photos" ya "Videos"
+  category  String   // "Project Photo", "Case Study", etc.
+  mediaUrl  String   // Image ya Video ka link (URL)
+  createdAt DateTime @default(now())
+}

@@ -16,9 +16,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Ye raha tera asali SEO mantar!
 export const metadata: Metadata = {
-  title: "Venus Solar Energy | Book Installation",
-  description: "Modern, simple, and frictionless solar energy installations for your home.",
+  title: "Venus Solar Energy | Best Solar Installers in Rajasthan",
+  description: "Zero grid dependency with Venus Solar. Top-rated solar installation in Siwana, Jodhpur, and across Rajasthan. Get your free quote today!",
+  keywords: ["Solar panels Siwana", "Solar installation Rajasthan", "Venus Solar Energy", "Best solar company Jodhpur", "Solar subsidy Rajasthan"],
 };
 
 export default function RootLayout({
@@ -28,11 +30,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-background`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-gray-950`}>
         <Header />
-        <main className="flex-grow w-full max-w-5xl mx-auto px-6 py-8">
+        
+        {/* Mobile aur Laptop dono ke liye perfect spacing */}
+        <main className="flex-grow w-full max-w-7xl mx-auto px-4 md:px-12 py-6 md:py-10">
           {children}
         </main>
+        
         <Footer />
         <FloatingWhatsApp />
       </body>
