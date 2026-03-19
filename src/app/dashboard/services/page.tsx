@@ -1,4 +1,4 @@
-import prisma from '@/lib/db';
+import { db as prisma } from '@/lib/db';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 
