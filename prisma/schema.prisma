@@ -83,3 +83,20 @@ model ServicePlan {
   description String   // "Handles 1.5 Ton AC..."
   updatedAt   DateTime @updatedAt
 }
+model GalleryImage {
+  id        String   @id @default(cuid())
+  url       String
+  name      String
+  createdAt DateTime @default(now())
+}
+// Naya Portfolio Model
+model Portfolio {
+  id          String   @id @default(cuid())
+  type        String   // "Photos" ya "Videos"
+  title       String   // Jaise: "Commercial Array - Pali"
+  category    String   // Jaise: "Project Photo"
+  coverImage  String   // Main samne dikhne wali photo
+  images      String   // Slider ke liye extra photos (Comma-separated)
+  videoUrl    String?  // Agar video hai toh uska link
+  createdAt   DateTime @default(now())
+}

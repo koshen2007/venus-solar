@@ -1,9 +1,9 @@
-import prisma from "@/lib/db";
+import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function ReviewsPage() {
-  const reviews = await prisma.review.findMany({
+  const reviews = await db.review.findMany({
     orderBy: { createdAt: "desc" }
   });
 

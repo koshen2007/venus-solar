@@ -1,13 +1,15 @@
-import prisma from "@/lib/db";
-
-export const dynamic = "force-dynamic";
+import { db } from "@/lib/db";
 
 export default async function ServicesPage() {
-  const services = await prisma.serviceRequest.findMany({
-    orderBy: { createdAt: "desc" }
+  // Yahan 'prisma' ki jagah 'db' aayega 👇
+  const services = await db.serviceRequest.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return (
+    // ... tera baaki ka HTML code same rahega
     <div>
       <h1 className="text-3xl font-black text-eco-green mb-2">Service Requests</h1>
       <p className="text-gray-500 mb-8">View and manage maintenance requests from existing customers.</p>

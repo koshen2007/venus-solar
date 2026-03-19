@@ -1,60 +1,62 @@
-import prisma from "@/lib/db";
+"use client";
+import { useState } from "react";
+import { Users, Phone, MessageCircle } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
-export default async function LeadsPage() {
-  const leads = await prisma.lead.findMany({
-    orderBy: { createdAt: "desc" }
-  });
+export default function LeadsPage() {
+  // Ye tera dummy data hai (Baad mein asli database se aayega)
+  const [leads, setLeads] = useState([
+    { id: 1, name: "Ramesh Kumar", phone: "+919876543210", req: "5kW Residential Setup", status: "New Lead", date: "Today, 06:15 AM" },
+    { id: 2, name: "Kamar Tanveer", phone: "+919024424633", req: "Solar for Factory", status: "Contacted", date: "Yesterday" }
+  ]);
 
   return (
-    <div>
-      <h1 className="text-3xl font-black text-eco-green mb-2">Lead Management</h1>
-      <p className="text-gray-500 mb-8">View contact form submissions from potential customers.</p>
-      
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto font-sans">
+      <h2 className="text-2xl md:text-3xl font-black mb-8 text-gray-900 flex items-center gap-3">
+        <Users className="text-green-600 w-8 h-8" /> Leads Manager
+      </h2>
+
+      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-100 text-gray-500 text-sm">
-                <th className="px-6 py-4 font-bold">Date</th>
-                <th className="px-6 py-4 font-bold">Name</th>
-                <th className="px-6 py-4 font-bold">Phone Number</th>
-                <th className="px-6 py-4 font-bold">Address/Info</th>
-                <th className="px-6 py-4 font-bold text-center">Status</th>
+              <tr className="bg-gray-900 text-white text-sm uppercase tracking-wider">
+                <th className="p-4 font-bold">Client Name</th>
+                <th className="p-4 font-bold">Requirement</th>
+                <th className="p-4 font-bold">Status</th>
+                <th className="p-4 font-bold text-center">Action (Call/Chat)</th>
               </tr>
             </thead>
-            <tbody>
-              {leads.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-400">
-                    No leads generated yet. Check back later!
+            <tbody className="divide-y divide-gray-100">
+              {leads.map((lead) => (
+                <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="p-4">
+                    <div className="font-bold text-gray-900 text-lg">{lead.name}</div>
+                    <div className="text-xs font-bold text-gray-500 mt-1">{lead.date}</div>
+                  </td>
+                  <td className="p-4 font-bold text-gray-600">{lead.req}</td>
+                  <td className="p-4">
+                    <span className={`px-3 py-1 rounded-lg text-xs font-black uppercase ${
+                      lead.status === 'New Lead' ? 'bg-red-100 text-red-600 border border-red-200' : 'bg-green-100 text-green-600 border border-green-200'
+                    }`}>
+                      {lead.status}
+                    </span>
+                  </td>
+                  <td className="p-4 flex items-center justify-center gap-3">
+                    {/* Direct Call Button */}
+                    <a href={`tel:${lead.phone}`} className="p-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-green-500 hover:text-white transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
+                      <Phone className="w-5 h-5" />
+                    </a>
+                    {/* Direct WhatsApp Button */}
+                    <a href={`https://wa.me/${lead.phone.replace('+','')}`} target="_blank" rel="noreferrer" className="p-3 bg-green-100 text-green-600 rounded-xl hover:bg-green-500 hover:text-white transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
+                      <MessageCircle className="w-5 h-5" />
+                    </a>
                   </td>
                 </tr>
-              ) : (
-                leads.map((lead) => (
-                  <tr key={lead.id} className="border-b border-gray-50 hover:bg-gray-50/50">
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                      {new Date(lead.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 font-bold text-eco-green">
-                      {lead.name}
-                    </td>
-                    <td className="px-6 py-4 font-medium text-gray-700">
-                      <a href={`tel:${lead.phone}`} className="hover:text-eco-green hover:underline">
-                        {lead.phone}
-                      </a>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 max-w-sm">
-                      {lead.address}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold capitalize bg-blue-50 text-blue-700 border border-blue-200">
-                        {lead.status.toLowerCase()}
-                      </span>
-                    </td>
-                  </tr>
-                ))
+              ))}
+              {leads.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="p-8 text-center text-gray-500 font-bold">Abhi tak koi grahak nahi aaya Seth!</td>
+                </tr>
               )}
             </tbody>
           </table>

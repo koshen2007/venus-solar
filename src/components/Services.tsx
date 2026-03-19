@@ -79,7 +79,7 @@ export default function Services({ onContactClick }: { onContactClick?: () => vo
                 ))}
               </div>
 
-              <button onClick={onContactClick} className="w-full md:w-auto px-8 py-4 bg-green-600 text-white rounded-full font-bold hover:bg-green-500 transition-all flex items-center justify-center gap-2">
+              <button onClick={onContactClick} suppressHydrationWarning={true} className="w-full md:w-auto px-8 py-4 bg-green-600 text-white rounded-full font-bold hover:bg-green-500 transition-all flex items-center justify-center gap-2">
                 Deploy System Now <ArrowRight className="w-4 h-4" />
               </button>
             </div>

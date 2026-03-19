@@ -1,33 +1,12 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
 
 export async function GET() {
-  try {
-    const products = await prisma.product.findMany({ orderBy: { createdAt: 'desc' } });
-    return NextResponse.json(products);
-  } catch (error) {
-    return NextResponse.json({ error: "Data nahi mila" }, { status: 500 });
-  }
-}
-
-export async function POST(req: Request) {
-  try {
-    const { name, price, capacity, optimalFor, location } = await req.json();
-    const product = await prisma.product.create({
-      data: { name, price, capacity, optimalFor, location },
-    });
-    return NextResponse.json(product);
-  } catch (error) {
-    return NextResponse.json({ error: "Save nahi hua" }, { status: 500 });
-  }
-}
-
-export async function DELETE(req: Request) {
-  try {
-    const { id } = await req.json();
-    await prisma.product.delete({ where: { id } });
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: "Delete nahi hua" }, { status: 500 });
-  }
+  // Dummy data taaki front-end par error na aaye
+  const products = [
+    { id: 1, name: "3 kW Family Pack", price: "1,50,000", capacity: "3 kW", optimalFor: "2-3 BHK Homes" },
+    { id: 2, name: "5 kW Business Pro", price: "2,40,000", capacity: "5 kW", optimalFor: "Big Homes / Shops" },
+    { id: 3, name: "10 kW Industrial", price: "4,50,000", capacity: "10 kW", optimalFor: "Factories / Offices" }
+  ];
+  
+  return NextResponse.json(products);
 }
