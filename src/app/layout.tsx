@@ -33,8 +33,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-gray-950`}>
         <Header />
         
-        {/* Mobile aur Laptop dono ke liye perfect spacing */}
-        <main className="flex-grow w-full max-w-7xl mx-auto px-4 md:px-12 py-6 md:py-10">
+        {/* ✨ FIX: Yahan se 'max-w-7xl', 'px-4', 'md:px-12' sab hata diya. 
+            Ab tera page poori screen faad ke edge-to-edge chalega! */}
+        <main className="flex-grow w-full">
           {children}
         </main>
         
