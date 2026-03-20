@@ -7,12 +7,12 @@ import { LayoutDashboard, Users, Wrench, Tag, Star, Image as ImageIcon, Menu, X,
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  // ✨ FIX: Teri saari purani aur nayi links ek saath sahi format mein
+  
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin" },
     { name: "Leads (Signups)", icon: Users, href: "/admin/leads" },
     { name: "Gallery Studio", icon: ImageIcon, href: "/admin/gallery" },
-    { name: "Portfolio Manager", icon: Film, href: "/admin/portfolio" }, // <-- Ye raha naya wala
+    { name: "Portfolio Manager", icon: Film, href: "/admin/portfolio" },
     { name: "Service Requests", icon: Wrench, href: "/admin/services" },
     { name: "Products & Pricing", icon: Tag, href: "/admin/products" },
     { name: "Reviews", icon: Star, href: "/admin/reviews" },
@@ -20,10 +20,10 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* MOBILE 3-LINE BUTTON */}
+      {/* ✨ FIX: Button ko top-24 (thoda neeche) aur z-[100] (sabse aage) kar diya */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="md:hidden fixed top-3 left-4 z-40 p-2 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-green-600 transition-colors"
+        className="md:hidden fixed top-24 left-4 z-[100] p-3 bg-green-600 text-white rounded-xl shadow-2xl border-2 border-white hover:bg-green-500 transition-all"
       >
         <Menu className="w-6 h-6" />
       </button>
@@ -32,12 +32,12 @@ export default function AdminSidebar() {
       {isOpen && (
         <div 
           onClick={() => setIsOpen(false)} 
-          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm transition-opacity"
+          className="md:hidden fixed inset-0 bg-black/70 z-[90] backdrop-blur-sm transition-opacity"
         />
       )}
 
-      {/* MAIN SIDEBAR */}
-      <div className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-gray-950 text-white flex flex-col border-r border-gray-900 z-50 transition-transform duration-300 ease-in-out ${
+      {/* MAIN SIDEBAR - Isko bhi z-[100] diya taaki open hone pe Header ke upar aaye */}
+      <div className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-gray-950 text-white flex flex-col border-r border-gray-900 z-[100] transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       }`}>
         
@@ -60,7 +60,6 @@ export default function AdminSidebar() {
         <nav className="flex flex-col gap-2 px-4 overflow-y-auto">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
-            
             return (
               <Link 
                 key={item.name} 
@@ -76,7 +75,7 @@ export default function AdminSidebar() {
           })}
         </nav>
 
-        {/* RETURN TO LIVE SITE (Tera purana feature) */}
+        {/* RETURN TO LIVE SITE */}
         <div className="mt-auto p-6 border-t border-gray-900">
           <Link href="/" className="flex items-center gap-2 text-sm text-gray-500 hover:text-green-500 transition-colors font-bold">
             <Home className="w-4 h-4" /> Return to Live Site
