@@ -7,7 +7,6 @@ import { LayoutDashboard, Users, Wrench, Tag, Star, Image as ImageIcon, Menu, X,
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
   // ✨ FIX: Teri saari purani aur nayi links ek saath sahi format mein
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin" },
